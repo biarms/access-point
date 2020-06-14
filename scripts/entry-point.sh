@@ -22,9 +22,9 @@ cleanup () {
   echo -e "${GREEN}[+] Successfully exited, bye! ${NOCOLOR}"
 }
 
-main () {
+start () {
   echo -e "${CYAN}[*] Setting wlan0 settings${NOCOLOR}"
-  ifdown wlan0
+  ifdown wlan0 || true
   ifup wlan0
 
   trap 'sigterm_handler' TERM INT
@@ -40,4 +40,15 @@ main () {
   cleanup
 }
 
-main
+function main () {
+    # From https://github.com/progrium/bashstyle
+    set -eo pipefail
+    [[ "$TRACE" ]] && set -x
+    if [[ "$1" == "" ]]; then
+      start
+    else
+      $@
+    fi
+}
+
+main "$@"

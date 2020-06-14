@@ -25,8 +25,7 @@ RUN touch /var/lib/dhcp/dhcpd.leases
 # Inspired from https://gitlab.com/hartek/autowlan
 ADD scripts /scripts
 
-# ENTRYPOINT ["/bin/sh", "/scripts/entry-point.sh"]
-RUN ["/bin/sh", "/scripts/entry-point.sh"]
+ENTRYPOINT ["/bin/sh", "/scripts/entry-point.sh"]
 
 ARG BUILD_DATE
 ARG VCS_REF
