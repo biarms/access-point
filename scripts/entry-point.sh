@@ -19,7 +19,7 @@ cleanup () {
   echo -e "${CYAN}[*] Restarting network interface...${NOCOLOR}"
   ifdown wlan0
   ifup wlan0
-  echo -e "${GREEN}[+] Successfully exited, byebye! ${NOCOLOR}"
+  echo -e "${GREEN}[+] Successfully exited, bye! ${NOCOLOR}"
 }
 
 main () {

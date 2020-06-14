@@ -1,4 +1,8 @@
-FROM alpine
+# 1. Define args usable during the pre-build phase
+# BUILD_ARCH: the docker architecture, with a tailing '/'. For instance, "arm64v8/"
+ARG BUILD_ARCH
+
+FROM ${BUILD_ARCH}alpine:3.12
 
 # Install packages - see https://wiki.alpinelinux.org/wiki/Wireless_AP_with_udhcpd_and_NAT / https://elinux.org/RPI-Wireless-Hotspot
 RUN apk update && apk add iw hostapd dhcp iptables
@@ -21,4 +25,12 @@ RUN touch /var/lib/dhcp/dhcpd.leases
 # Inspired from https://gitlab.com/hartek/autowlan
 ADD scripts /scripts
 
-ENTRYPOINT ["/bin/sh", "/scripts/entry-point.sh"]
+# ENTRYPOINT ["/bin/sh", "/scripts/entry-point.sh"]
+RUN ["/bin/sh", "/scripts/entry-point.sh"]
+
+ARG BUILD_DATE
+ARG VCS_REF
+LABEL \
+	org.label-schema.build-date=$BUILD_DATE \
+	org.label-schema.vcs-ref=$VCS_REF \
+	org.label-schema.vcs-url="https://github.com/biarms/access-point"
