@@ -25,7 +25,7 @@ cleanup () {
 start () {
   echo -e "${CYAN}[*] Setting wlan0 settings${NOCOLOR}"
   ifdown wlan0 || true
-  ifup wlan0
+  ifup wlan0 || true
 
   trap 'sigterm_handler' TERM INT
   echo -e "${CYAN}[*] Creating iptables rules${NOCOLOR}"
