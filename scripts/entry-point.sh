@@ -23,13 +23,13 @@ cleanup () {
 }
 
 main () {
-  trap 'sigterm_handler' TERM INT
-  echo -e "${CYAN}[*] Creating iptables rules${NOCOLOR}"
-  sh /scripts/iptables_on.sh || echo -e "${RED}[-] Error creating iptables rules${NOCOLOR}"
-
   echo -e "${CYAN}[*] Setting wlan0 settings${NOCOLOR}"
   ifdown wlan0
   ifup wlan0
+
+  trap 'sigterm_handler' TERM INT
+  echo -e "${CYAN}[*] Creating iptables rules${NOCOLOR}"
+  sh /scripts/iptables_on.sh || echo -e "${RED}[-] Error creating iptables rules${NOCOLOR}"
 
   echo -e "${CYAN}[+] Configuration successful! Services will start now${NOCOLOR}"
   dhcpd -4 -f -d wlan0 &
