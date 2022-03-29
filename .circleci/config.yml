@@ -3,9 +3,16 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: biarms/docker-toolbox:0.0.2
+      - image: biarms/docker-toolbox:0.0.5
     steps:
       - setup_remote_docker:
-          version: 19.03.8 # Max supported version was found on https://circleci.com/docs/2.0/building-docker-images/
+          version: 20.10.11 #19.03.13 # Max supported version was found on https://circleci.com/docs/2.0/building-docker-images/
+      - run: docker version
       - checkout
-      - run: BETA_VERSION='-beta-circleci' make
+      - run: |
+          if [ "${CIRCLE_BRANCH}" == "master" ]
+          then
+            make
+          else
+            BETA_VERSION='-beta-circleci' make
+          fi

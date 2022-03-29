@@ -46,7 +46,26 @@ See for instance the [arm-docker-stacks infra access-point](https://github.com/b
 ## How to build locally
 1. Option 1: with CircleCI Local CLI:
    - Install [CircleCI Local CLI](https://circleci.com/docs/2.0/local-cli/)
-   - Call `circleci local execute`
+   - Call `circleci local execute -e DOCKER_USERNAME=******** -e DOCKER_PASSWORD=********`
 2. Option 2: with make:
    - Install [GNU make](https://www.gnu.org/software/make/manual/make.html). Version 3.81 (which came out-of-the-box on MacOS) should be OK.
+   - Call `DOCKER_USERNAME=******** DOCKER_PASSWORD=******** make circleci-local-build`
+   - Call `DOCKER_USERNAME=******** DOCKER_PASSWORD=******** make`
+   - Call `docker login && make build`
    - Call `make build`
+
+## Release notes:
+
+### Version 0.0.1 (corrupted)
+- Image build with docker-toolbox version 0.0.2
+- Image build on alpine:3.12, building a hostapd version 2.9
+- Critical issue: Don't have entry point 
+
+### Version 0.0.2
+- Image build with docker-toolbox version 0.0.2
+- Image build on alpine:3.12, building a hostapd version 2.9
+- Fix missing entry point issue
+
+### Version 0.0.3
+- Image build with docker-toolbox version 0.0.5
+- Image build on alpine:3.15.3, building a hostapd version 2.10

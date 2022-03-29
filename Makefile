@@ -14,8 +14,8 @@ DOCKER_PASSWORD ?=
 # BETA_VERSION: Nothing, or '-beta-123'
 BETA_VERSION ?=
 DOCKER_IMAGE_NAME = biarms/access-point
-DOCKER_IMAGE_VERSION = 0.0.2
-SOFTWARE_VERSION = 2.9
+DOCKER_IMAGE_VERSION = 0.0.3
+SOFTWARE_VERSION = 2.10
 DOCKER_IMAGE_TAGNAME = ${DOCKER_REGISTRY}${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_VERSION}${BETA_VERSION}
 # See https://www.gnu.org/software/make/manual/html_node/Shell-Function.html
 BUILD_DATE=$(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
@@ -40,8 +40,8 @@ check-binaries:
 	@ which docker > /dev/null || (echo "Please install docker before using this script" && exit 1)
 	@ which git > /dev/null || (echo "Please install git before using this script" && exit 2)
 	@ # deprecated: which manifest-tool > /dev/null || (echo "Ensure that you've got the manifest-tool utility in your path. Could be downloaded from  https://github.com/estesp/manifest-tool/releases/" && exit 3)
-	@ DOCKER_CLI_EXPERIMENTAL=enabled docker manifest --help | grep "docker manifest COMMAND" > /dev/null || (echo "docker manifest is needed. Consider upgrading docker" && exit 4)
-	@ DOCKER_CLI_EXPERIMENTAL=enabled docker version -f '{{.Client.Experimental}}' | grep "true" > /dev/null || (echo "docker experimental mode is not enabled" && exit 5)
+	@ docker manifest --help | grep "docker manifest COMMAND" > /dev/null || (echo "docker manifest is needed. Consider upgrading docker" && exit 4)
+	@ docker version -f '{{.Client.Experimental}}' | grep "true" > /dev/null || (echo "docker experimental mode is not enabled" && exit 5)
 	# Debug info
 	@ echo "DOCKER_REGISTRY: ${DOCKER_REGISTRY}"
 	@ echo "BUILD_DATE: ${BUILD_DATE}"
@@ -72,18 +72,18 @@ uninstall-qemu: check-binaries
 
 # See https://docs.docker.com/buildx/working-with-buildx/
 check-buildx: check-binaries
-	DOCKER_CLI_EXPERIMENTAL=enabled docker buildx version
+	docker buildx version
 
 buildx-prepare: install-qemu check-buildx
-	DOCKER_CLI_EXPERIMENTAL=enabled docker context create buildx-multi-arch-context || true
-	DOCKER_CLI_EXPERIMENTAL=enabled docker buildx create buildx-multi-arch-context --name=buildx-multi-arch || true
-	DOCKER_CLI_EXPERIMENTAL=enabled docker buildx use buildx-multi-arch
+	docker context create buildx-multi-arch-context || true
+	docker buildx create buildx-multi-arch-context --name=buildx-multi-arch || true
+	docker buildx use buildx-multi-arch
 	# Debug info
 	@ echo "DOCKER_IMAGE_TAGNAME: ${DOCKER_IMAGE_TAGNAME}"
 
 buildx: docker-login-if-possible buildx-prepare
-	DOCKER_CLI_EXPERIMENTAL=enabled docker buildx build --progress plain -f Dockerfile --push --platform "${PLATFORM}" --tag "${DOCKER_IMAGE_TAGNAME}" --build-arg SOFTWARE_VERSION="${SOFTWARE_VERSION}" --build-arg VCS_REF="${VCS_REF}" --build-arg BUILD_DATE="${BUILD_DATE}" .
-	DOCKER_CLI_EXPERIMENTAL=enabled docker buildx build --progress plain -f Dockerfile --push --platform "${PLATFORM}" --tag "$(DOCKER_REGISTRY)${DOCKER_IMAGE_NAME}:latest${BETA_VERSION}" --build-arg SOFTWARE_VERSION="${SOFTWARE_VERSION}" --build-arg VCS_REF="${VCS_REF}" --build-arg BUILD_DATE="${BUILD_DATE}" .
+	docker buildx build --progress plain -f Dockerfile --push --platform "${PLATFORM}" --tag "${DOCKER_IMAGE_TAGNAME}" --build-arg SOFTWARE_VERSION="${SOFTWARE_VERSION}" --build-arg VCS_REF="${VCS_REF}" --build-arg BUILD_DATE="${BUILD_DATE}" .
+	docker buildx build --progress plain -f Dockerfile --push --platform "${PLATFORM}" --tag "$(DOCKER_REGISTRY)${DOCKER_IMAGE_NAME}:latest${BETA_VERSION}" --build-arg SOFTWARE_VERSION="${SOFTWARE_VERSION}" --build-arg VCS_REF="${VCS_REF}" --build-arg BUILD_DATE="${BUILD_DATE}" .
 
 # Fails with: "standard_init_linux.go:211: exec user process caused "no such file or directory"" if qemu is not installed...
 test-all-images: test-arm32v6 test-arm32v7 test-arm64v8 test-amd64

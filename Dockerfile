@@ -2,7 +2,7 @@
 # BUILD_ARCH: the docker architecture, with a tailing '/'. For instance, "arm64v8/"
 ARG BUILD_ARCH
 
-FROM ${BUILD_ARCH}alpine:3.12
+FROM ${BUILD_ARCH}alpine:3.15.3
 
 # Install packages - see https://wiki.alpinelinux.org/wiki/Wireless_AP_with_udhcpd_and_NAT / https://elinux.org/RPI-Wireless-Hotspot
 RUN apk update && apk add iw hostapd dhcp iptables
